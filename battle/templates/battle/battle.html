@@ -21,61 +21,126 @@
 <!--  <div class="container-fluid m-0 p-0">-->
 <!--  <div class="row ">-->
 <!--    <div class="col-6">-->
-<!--        <h3>Melody 1</h3>-->
-<!--        <audio id="audio1" controls></audio>-->
-<!--        <button onclick="playAudio('audio1')">Play Melody 1</button>-->
+<!--        <h3>Melody 0</h3>-->
+<!--            <audio controls>-->
+<!--                <source src="{{ mp3_file_url_0 }}" type="audio/mpeg">-->
+<!--                Ваш браузер не поддерживает элемент audio.-->
+<!--            </audio>-->
 <!--    </div>-->
 <!--    <div class="col-6">-->
-<!--        <h3>Melody 2</h3>-->
-<!--        <audio id="audio2" controls></audio>-->
-<!--        <button onclick="playAudio('audio2')">Play Melody 2</button>-->
+<!--        <h3>Melody 1</h3>-->
+<!--            <audio controls>-->
+<!--                <source src="{{ mp3_file_url_1 }}" type="audio/mpeg">-->
+<!--                Ваш браузер не поддерживает элемент audio.-->
+<!--            </audio>-->
 <!--    </div>-->
 <!--  </div>-->
 <!--  </div>-->
-
-<!--   <h1>MIDI Pairs</h1>-->
-<!--    <button onclick="getMidiPair()">Get MIDI Pair</button>-->
-
-
-
-
-
-<!--    <script>-->
-<!--        function getMidiPair() {-->
-<!--            fetch("/midi-pair/")-->
-<!--                .then(response => response.json())-->
-<!--                .then(data => {-->
-<!--                    if (data.error) {-->
-<!--                        alert(data.error);-->
-<!--                        return;-->
-<!--                    }-->
-<!--                    document.getElementById("audio1").src = data.midi_1;-->
-<!--                    document.getElementById("audio2").src = data.midi_2;-->
-<!--                });-->
-<!--        }-->
-
-<!--        function playAudio(id) {-->
-<!--            let audio = document.getElementById(id);-->
-<!--            audio.play();-->
-<!--        }-->
-<!--    </script>-->
 
 
 <!--  </body>-->
 <!--</html>-->
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Battle</title>
-</head>
-<body>
-    <h1>Воспроизведение MIDI</h1>
-    <audio controls>
-        <source src="{{ mp3_file_url }}" type="audio/mpeg">
-        Ваш браузер не поддерживает элемент audio.
-    </audio>
-</body>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.3" integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq" crossorigin="anonymous"></script>
+  </head>
+
+  <body class="bg-dark">
+    <nav class="navbar navbar-light h-25">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#" style="color: white">
+          <img src="../../static/battle/images/logo.png" alt="" width="50" height="50" class="d-inline-block align-text-middle">
+          <h1>Evalutionary music generation</h1>
+        </a>
+      </div>
+    </nav>
+
+    <div class="container-fluid m-0 p-0">
+      <div class="row">
+        <div class="col-6">
+          <h3>Melody 0</h3>
+          <canvas class="w-50" id="visualizer1"></canvas>
+          <br>
+          <audio id="audio1" controls>
+            <source src="{{ mp3_file_url_0 }}" type="audio/mpeg">
+            Ваш браузер не поддерживает элемент audio.
+          </audio>
+
+        </div>
+        <div class="col-6">
+          <h3>Melody 1</h3>
+          <canvas class="w-50" id="visualizer2"></canvas>
+          <br>
+          <audio id="audio2" controls>
+            <source src="{{ mp3_file_url_1 }}" type="audio/mpeg">
+            Ваш браузер не поддерживает элемент audio.
+          </audio>
+
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Функция для инициализации линейного визуализатора
+      function initVisualizer(audioElement, canvasElement) {
+        const canvas = canvasElement;
+        const ctx = canvas.getContext("2d");
+
+<!--        canvas.width = window.innerWidth / 2;  // Устанавливаем ширину холста-->
+        canvas.height = 200; // Устанавливаем фиксированную высоту для полосы
+
+        const audioCtx = new AudioContext();
+        const analyser = audioCtx.createAnalyser();
+        const source = audioCtx.createMediaElementSource(audioElement);
+
+        analyser.fftSize = 512;
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        function draw() {
+          requestAnimationFrame(draw);
+
+          analyser.getByteFrequencyData(dataArray);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          const barWidth = canvas.width / bufferLength;
+          for (let i = 0; i < bufferLength; i++) {
+            const barHeight = dataArray[i];
+            const x = barWidth * i;
+            const y = canvas.height - barHeight;
+            ctx.fillStyle = `hsl(${i * 2}, 100%, 70%)`;
+            ctx.fillRect(x, y, barWidth, barHeight);
+          }
+        }
+
+        // Запускаем визуализацию, когда аудио начало воспроизведение
+        audioElement.onplay = () => {
+          audioCtx.resume().then(() => {
+            draw();
+          });
+        };
+      }
+
+      // Инициализация визуализаторов для обоих аудио
+      const audio1 = document.getElementById("audio1");
+      const canvas1 = document.getElementById("visualizer1");
+
+      const audio2 = document.getElementById("audio2");
+      const canvas2 = document.getElementById("visualizer2");
+
+      initVisualizer(audio1, canvas1);
+      initVisualizer(audio2, canvas2);
+    </script>
+  </body>
 </html>

@@ -16,6 +16,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+SOUNDFONT_PATH = os.path.join(BASE_DIR, 'soundfonts', 'GeneralUser.sf2')
+
 
 
 # Quick-start development settings - unsuitable for production
