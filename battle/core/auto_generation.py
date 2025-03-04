@@ -85,7 +85,7 @@ def play_melody(index):
     pygame.init()
 
     pygame.mixer.init()
-    pygame.mixer.music.load(f'melody_{index}.mid')
+    pygame.mixer.music.load(os.path.join(settings.MEDIA_ROOT, f'melody_{index}.mid'))
     pygame.mixer.music.play()
 
     while pygame.mixer.music.get_busy():
@@ -188,7 +188,7 @@ if __name__ == "__main__":
     n_melody_notes = 8
     melodies = generate_random_melodies(n_melodies)
     save_melodies(melodies)
-    # melodies = load_melodies_data()
+    melodies = load_melodies_data()
 
     while True:
         pairs = random_pairs(n_melodies)
