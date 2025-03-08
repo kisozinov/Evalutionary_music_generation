@@ -77,7 +77,7 @@ def save_melodies(melodies):
 
             mid.save(os.path.join(settings.MEDIA_ROOT, f'melody_{i}.mid'))
 
-    with open(f'melodies.json', 'w') as f:
+    with open(os.path.join(settings.MEDIA_ROOT, f'melodies.json'), 'w') as f:
         json.dump(melodies, f, indent=4)
 
 
@@ -124,6 +124,7 @@ def pair_round(idx, pair):
 
 def crossover(melodies, winners):
     new_generation = {}
+    n_melody_notes=8
     for i in range(len(melodies)):
         first_parent, second_parent = random.sample(winners, 2)
         split_index = random.randint(1, n_melody_notes - 1)
@@ -170,7 +171,7 @@ def mutation(melodies):
 
 
 def load_melodies_data():
-    with open("melodies.json") as f:
+    with open(os.path.join(settings.MEDIA_ROOT, f'melodies.json')) as f:
         melodies = json.load(f)
 
     keys = list(melodies.keys())
