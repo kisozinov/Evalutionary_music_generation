@@ -9,6 +9,10 @@ from Evalutionary_music_generation import settings
 
 class MidiPairView(View):
     def get(self, request):
+        # if os.listdir(settings.MEDIA_ROOT) == ['melodies.json']:
+        #     melody_generator_obj = MelodyGenerator()
+        #     melody_generator_obj.generate_random_melodies()
+        #     json_path = os.path.join(settings.MEDIA_ROOT, f'melodies.json')
         n_melodies = 6
         if not os.listdir(settings.MEDIA_ROOT):
             melodies = generate_random_melodies(n_melodies)

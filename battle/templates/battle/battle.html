@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+
+
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -67,83 +76,68 @@
         </div>
         <div class="col-1"></div>
     </div>
-</div>
 
-<div class="row align-items-center p-3">
-    <div class="col-1"></div>
-    <div class="col-4">
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="selected_melody" value="{{ melody_0_index }}">
-            <button type="submit" class="btn btn-outline-light w-25">Select</button>
-        </form>
-
-
+    <div class="row align-items-center p-3">
+        <div class="col-1"></div>
+        <div class="col-4">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="selected_melody" value="{{ melody_0_index }}">
+                <button type="submit" class="btn btn-outline-light w-25">Select</button>
+            </form>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-4">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="selected_melody" value="{{ melody_1_index }}">
+                <button class="btn btn-outline-light w-25">Select</button>
+            </form>
+        </div>
+        <div class="col-1"></div>
     </div>
-    <div class="col-2"></div>
-    <div class="col-4">
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="selected_melody" value="{{ melody_1_index }}">
-            <button class="btn btn-outline-light w-25">Select</button>
-        </form>
-    </div>
-    <div class="col-1"></div>
+
 </div>
 
 <script>
-    // Функция для инициализации линейного визуализатора
     function initVisualizer(audioElement, canvasElement) {
-      const canvas = canvasElement;
-      const ctx = canvas.getContext("2d");
+        const canvas = canvasElement;
+        const ctx = canvas.getContext("2d");
 
-<!--        canvas.width = window.innerWidth / 2;  // Устанавливаем ширину холста-->
-<!--      canvas.height = 200; // Устанавливаем фиксированную высоту для полосы-->
+        canvas.width = 300;
+        canvas.height = 300;
 
-      const audioCtx = new AudioContext();
-      const analyser = audioCtx.createAnalyser();
-      const source = audioCtx.createMediaElementSource(audioElement);
+        const audioCtx = new AudioContext();
+        const analyser = audioCtx.createAnalyser();
+        const source = audioCtx.createMediaElementSource(audioElement);
 
-      analyser.fftSize = 512;
-      source.connect(analyser);
-      analyser.connect(audioCtx.destination);
+        analyser.fftSize = 256;
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
 
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
 
-      function draw() {
-        requestAnimationFrame(draw);
+        function draw() {
+            requestAnimationFrame(draw);
 
-        analyser.getByteFrequencyData(dataArray);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+            analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const barWidth = canvas.width / bufferLength;
-        for (let i = 0; i < bufferLength; i++) {
-          const barHeight = dataArray[i];
-          const x = barWidth * i;
-          const y = canvas.height - barHeight;
-          ctx.fillStyle = `hsl(${i * 2}, 100%, 70%)`;
-          ctx.fillRect(x, y, barWidth, barHeight);
+            const radius = Math.max(...dataArray) / 2;
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, Math.PI * 2);
+            ctx.fillStyle = `hsl(${radius * 5}, 100%, 50%)`;
+            ctx.fill();
         }
-      }
 
-      // Запускаем визуализацию, когда аудио начало воспроизведение
-      audioElement.onplay = () => {
-        audioCtx.resume().then(() => {
-          draw();
-        });
-      };
+        audioElement.onplay = () => {
+            audioCtx.resume().then(draw);
+        };
     }
 
-    // Инициализация визуализаторов для обоих аудио
-    const audio1 = document.getElementById("audio1");
-    const canvas1 = document.getElementById("visualizer1");
-
-    const audio2 = document.getElementById("audio2");
-    const canvas2 = document.getElementById("visualizer2");
-
-    initVisualizer(audio1, canvas1);
-    initVisualizer(audio2, canvas2);
+    initVisualizer(document.getElementById("audio1"), document.getElementById("visualizer1"));
+    initVisualizer(document.getElementById("audio2"), document.getElementById("visualizer2"));
 </script>
 </body>
 </html>
