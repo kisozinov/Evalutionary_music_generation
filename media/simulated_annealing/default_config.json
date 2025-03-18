@@ -1,0 +1,12 @@
+{
+    "monotony": { "weight": -0.5 },
+    "ascending_scale": { "weight": 0.0 },
+    "descending_scale": { "weight": 0.0 },
+    "arpeggio": { "weight": 0.8 },
+    "repetition": { "weight": -0.2 },
+    "interval_variety": { "weight": 0.2 },
+    "smoothness": { "weight": 0.1 },
+    "symmetry": { "weight": 0.1 },
+    "tonic_stability": { "weight": 0.3 },
+    "tonal_purity": { "weight": 0.2, "scale": [48, 52, 55, 60, 64, 67, 72] }
+}
