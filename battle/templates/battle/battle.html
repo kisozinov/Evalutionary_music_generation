@@ -1,143 +1,80 @@
+{% extends 'Evalutionary_music_generation/base.html' %}
 
 
+{% load crispy_forms_tags %}
 
 
+{% block content %}
 
-
-
-
-
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Battle</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-            crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/htmx.org@2.0.3"
-            integrity="sha384-0895/pl2MU10Hqc6jd4RvrthNlDiE9U1tWmX7WRESftEDRosgxNsQG/Ze9YMRzHq"
-            crossorigin="anonymous"></script>
-</head>
-
-<body class="bg-dark">
-<nav class="navbar navbar-light h-25">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="color: white">
-            <img src="../../static/battle/images/logo.png" alt="" width="50" height="50"
-                 class="d-inline-block align-text-middle">
-            <h1>Evalutionary music generation</h1>
-        </a>
-    </div>
-</nav>
-
-
-<div class="container-fluid m-0 p-0">
-    <div class="row align-items-center p-3">
-        <div class="col-1"></div>
-        <div class="col-4">
-            <h3 class="text-light">Melody 0</h3>
+<div class="container-fluid mb-5 pb-5">
+    <form action='{% url "midi-pair" %}' method='post'>
+        {% csrf_token %}
+        <div class="row align-items-center">
+            <div class="col-3"></div>
+            <div class="col-2" style="color: white;">{{ form.n_melodies|as_crispy_field }}</div>
+            <div class="col-2" style="color: white;">{{ form.n_melody_notes|as_crispy_field }}</div>
+            <div class="col-2 pt-3 position-sticky">
+                <button type="submit" class="btn btn-outline-light btn-lg">Generate</button>
+            </div>
+            <div class="col-2"></div>
         </div>
-        <div class="col-2"></div>
-        <div class="col-4">
-            <h3 class="text-light">Melody 1</h3>
-        </div>
-        <div class="col-1"></div>
-    </div>
-
-    <div class="row align-items-center p-3">
-        <div class="col-1"></div>
-        <div class="col-4">
-            <canvas id="visualizer1"></canvas>
-        </div>
-        <div class="col-2"></div>
-        <div class="col-4">
-            <canvas id="visualizer2"></canvas>
-        </div>
-        <div class="col-1"></div>
-    </div>
-
-    <div class="row align-items-center p-3">
-        <div class="col-1"></div>
-        <div class="col-4">
-            <audio id="audio1" controls style="width:30em;">
-                <source src="{{ mp3_file_url_0 }}" type="audio/mpeg">
-                Ваш браузер не поддерживает элемент audio.
-            </audio>
-        </div>
-        <div class="col-2"></div>
-        <div class="col-4">
-            <audio id="audio2" controls style="width:30em;">
-                <source src="{{ mp3_file_url_1 }}" type="audio/mpeg">
-                Ваш браузер не поддерживает элемент audio.
-            </audio>
-        </div>
-        <div class="col-1"></div>
-    </div>
-
-    <div class="row align-items-center p-3">
-        <div class="col-1"></div>
-        <div class="col-4">
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="selected_melody" value="{{ melody_0_index }}">
-                <button type="submit" class="btn btn-outline-light w-25">Select</button>
-            </form>
-        </div>
-        <div class="col-2"></div>
-        <div class="col-4">
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="selected_melody" value="{{ melody_1_index }}">
-                <button class="btn btn-outline-light w-25">Select</button>
-            </form>
-        </div>
-        <div class="col-1"></div>
-    </div>
-
+    </form>
 </div>
 
-<script>
-    function initVisualizer(audioElement, canvasElement) {
-        const canvas = canvasElement;
-        const ctx = canvas.getContext("2d");
 
-        canvas.width = 300;
-        canvas.height = 300;
+{% if melody_0_index %}
+    <div class="container-fluid m-0 p-0">
 
-        const audioCtx = new AudioContext();
-        const analyser = audioCtx.createAnalyser();
-        const source = audioCtx.createMediaElementSource(audioElement);
+        <div class="row align-items-center p-3">
+            <div class="col-1"></div>
+            <div class="col-4">
+                <h4 class="text-light">Melody {{ melody_0_index }}</h4>
+            </div>
+            <div class="col-2"></div>
+            <div class="col-4">
+                <h4 class="text-light">Melody {{ melody_1_index }}</h4>
+            </div>
+            <div class="col-1"></div>
+        </div>
 
-        analyser.fftSize = 256;
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
+        <div class="row align-items-center p-3">
+            <div class="col-1"></div>
+            <div class="col-4">
+                <audio id="audio1" controls style="width:30em;">
+                    <source src="{{ mp3_file_url_0 }}" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+            <div class="col-2"></div>
+            <div class="col-4">
+                <audio id="audio2" controls style="width:30em;">
+                    <source src="{{ mp3_file_url_1 }}" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+            <div class="col-1"></div>
+        </div>
 
-        const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
+        <div class="row align-items-center p-3">
+            <div class="col-1"></div>
+            <div class="col-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="selected_melody" value="{{ melody_0_index }}">
+                    <button type="submit" class="btn btn-outline-light w-25">Select</button>
+                </form>
+            </div>
+            <div class="col-2"></div>
+            <div class="col-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="selected_melody" value="{{ melody_1_index }}">
+                    <button class="btn btn-outline-light w-25">Select</button>
+                </form>
+            </div>
+            <div class="col-1"></div>
+        </div>
+    </div>
+{% endif %}
 
-        function draw() {
-            requestAnimationFrame(draw);
-
-            analyser.getByteFrequencyData(dataArray);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const radius = Math.max(...dataArray) / 2;
-            ctx.beginPath();
-            ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, Math.PI * 2);
-            ctx.fillStyle = `hsl(${radius * 5}, 100%, 50%)`;
-            ctx.fill();
-        }
-
-        audioElement.onplay = () => {
-            audioCtx.resume().then(draw);
-        };
-    }
-
-    initVisualizer(document.getElementById("audio1"), document.getElementById("visualizer1"));
-    initVisualizer(document.getElementById("audio2"), document.getElementById("visualizer2"));
-</script>
-</body>
-</html>
+{% endblock %}

@@ -49,10 +49,9 @@ code2name = {
 }
 
 
-def generate_random_melodies(n=10):
-    n_melody_notes=8
+def generate_random_melodies(n_melodies, n_melody_notes):
     melodies = {}
-    for i in range(n):
+    for i in range(n_melodies):
         notes = [random.randint(48, 83) for _ in range(n_melody_notes)]
         durations = random.choices([240, 480, 960, 1920], k=n_melody_notes)
 
@@ -64,7 +63,7 @@ def generate_random_melodies(n=10):
     return melodies
 
 
-def save_melodies(melodies):
+def save_melodies(melodies, algorithm_dir):
     for i in range(len(melodies)):
         mid = MidiFile()
         track = MidiTrack()
@@ -75,17 +74,17 @@ def save_melodies(melodies):
             track.append(Message('note_on', note=note, velocity=64, time=0))
             track.append(Message('note_off', note=note, velocity=64, time=duration))
 
-            mid.save(os.path.join(settings.MEDIA_ROOT, f'melody_{i}.mid'))
+            mid.save(os.path.join(settings.MEDIA_ROOT, algorithm_dir, f'melody_{i}.mid'))
 
-    with open(os.path.join(settings.MEDIA_ROOT, f'melodies.json'), 'w') as f:
+    with open(os.path.join(settings.MEDIA_ROOT, algorithm_dir, f'melodies.json'), 'w') as f:
         json.dump(melodies, f, indent=4)
 
 
-def play_melody(index):
+def play_melody(index, algorithm_dir):
     pygame.init()
 
     pygame.mixer.init()
-    pygame.mixer.music.load(os.path.join(settings.MEDIA_ROOT, f'melody_{index}.mid'))
+    pygame.mixer.music.load(os.path.join(settings.MEDIA_ROOT, algorithm_dir, f'melody_{index}.mid'))
     pygame.mixer.music.play()
 
     while pygame.mixer.music.get_busy():
@@ -122,9 +121,16 @@ def pair_round(idx, pair):
     return pair[winner - 1]
 
 
-def crossover(melodies, winners):
+def crossover(melodies, winners, n_melody_notes):
+    print()
+    print()
+    print()
+    print(n_melody_notes)
+    print(winners)
+    print()
+    print()
+    print()
     new_generation = {}
-    n_melody_notes=8
     for i in range(len(melodies)):
         first_parent, second_parent = random.sample(winners, 2)
         split_index = random.randint(1, n_melody_notes - 1)
@@ -170,8 +176,8 @@ def mutation(melodies):
     return melodies
 
 
-def load_melodies_data():
-    with open(os.path.join(settings.MEDIA_ROOT, f'melodies.json')) as f:
+def load_melodies_data(algorithm_dir):
+    with open(os.path.join(settings.MEDIA_ROOT, algorithm_dir, f'melodies.json')) as f:
         melodies = json.load(f)
 
     keys = list(melodies.keys())
