@@ -1,0 +1,19 @@
+{% extends 'Evalutionary_music_generation/base.html' %}
+
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container m-5 p-0">
+    <h3 class="p-3 m-3" style="color: white">Best melodies from previous loop:</h3>
+    {% for file in previous_winners %}
+        <div class="row align-items-center p-3 m-3">
+                <audio controls class="w-50">
+                    <source src="{{ file }}" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

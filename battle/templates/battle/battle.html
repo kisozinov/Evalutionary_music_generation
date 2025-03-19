@@ -13,8 +13,11 @@
             <div class="col-3"></div>
             <div class="col-2" style="color: white;">{{ form.n_melodies|as_crispy_field }}</div>
             <div class="col-2" style="color: white;">{{ form.n_melody_notes|as_crispy_field }}</div>
-            <div class="col-2 pt-3 position-sticky">
+            <div class="col-1 pt-3 position-sticky">
                 <button type="submit" class="btn btn-outline-light btn-lg">Generate</button>
+            </div>
+            <div class="col-1">
+                <a href='{% url "manual_result" %}' class="btn btn-outline-secondary">Get result</a>
             </div>
             <div class="col-2"></div>
         </div>

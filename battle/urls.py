@@ -1,15 +1,7 @@
 from django.urls import path
-from battle.views import MidiPairView
+from battle.views import MidiPairView, ManualResultView
 
 urlpatterns = [
-    path("battle/", MidiPairView.as_view(), name="midi-pair")
+    path("battle/", MidiPairView.as_view(), name="midi-pair"),
+    path("manual_result/", ManualResultView.as_view(), name="manual_result"),
 ]
-
-# from django.urls import path
-# from battle.views import GenerateView, SelectionView
-#
-# urlpatterns = [
-#     path("generate/", GenerateView.as_view(), name="generate"),
-#     path("select/", SelectionView.as_view(), name="select"),
-# ]
-

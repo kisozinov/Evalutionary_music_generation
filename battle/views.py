@@ -1,32 +1,15 @@
+import shutil
+import time
+
 from django.views import View
+from django.views.generic import TemplateView
+
 from battle.core.auto_generation import generate_random_melodies, save_melodies, random_pairs, crossover, mutation
 from django.shortcuts import render, redirect
 from battle.core.convertor import convert_mid_to_mp3
 import os
 from Evalutionary_music_generation import settings
 from battle.forms import Manual
-
-
-# class GenerateView(View):
-#     def get(self, request):
-#         if 'initial' in request.session:
-#             initial_form_data = request.session['initial']
-#             form = Manual(initial=initial_form_data)
-#             n_melodies = initial_form_data['n_melodies']
-#             n_melody_notes = initial_form_data['n_melody_notes']
-#         else:
-#             form = Manual()
-#         context = {'form': form}
-#         return render(request, 'battle/battle.html', context)
-#
-#     def post(self, request):
-#         form = Manual(request.POST)
-#         if form.is_valid():
-#             form_data = form.cleaned_data
-#             request.session['initial'] = form_data
-#
-#
-# class SelectionView(View):
 
 
 class MidiPairView(View):
@@ -80,10 +63,23 @@ class MidiPairView(View):
             request.session.modified = True
 
         if len(request.session.get('winners', [])) == request.session['initial']['n_melodies'] / 2:
-            print("new_loop")
             winners = request.session['winners']
             melodies = request.session['melodies']
             melodies = {int(key): value for key, value in melodies.items()}
+
+            source_folder = os.path.join(settings.MEDIA_ROOT, algorithm_dir)
+            destination_folder = os.path.join(settings.MEDIA_ROOT, "previous")
+            if os.path.exists(destination_folder):
+                shutil.rmtree(destination_folder)
+            os.makedirs(destination_folder)
+            winners_file_names = [f"melody_{num}.mp3" for num in winners]
+            for file in winners_file_names:
+                shutil.move(os.path.join(source_folder, file), os.path.join(destination_folder, file))
+            if os.path.exists(source_folder):
+                shutil.rmtree(source_folder)
+            os.makedirs(source_folder)
+
+
             melodies = crossover(melodies, winners, request.session['initial']['n_melody_notes'])
             melodies = mutation(melodies)
             save_melodies(melodies, algorithm_dir)
@@ -93,4 +89,22 @@ class MidiPairView(View):
             request.session['pairs'] = pairs
             request.session['winners'] = []
 
+        time.sleep(2)
         return redirect('midi-pair')
+
+
+class ManualResultView(TemplateView):
+    template_name = 'battle/manual_result.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        previous_winners = []
+        folder = os.path.join(settings.MEDIA_ROOT, "previous")
+        for file in os.listdir(folder):
+            previous_winners.append(os.path.join(settings.MEDIA_URL, "previous", file))
+        context['previous_winners'] = previous_winners
+        return context
+
+
+
+
