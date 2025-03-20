@@ -1,42 +1,55 @@
 {% extends 'Evalutionary_music_generation/base.html' %}
 
 
+{% block title %}
+Heuristic
+{% endblock %}
+
 {% load crispy_forms_tags %}
+
+      {% block links %}
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href='{% url "midi-pair" %}'>Manual algorithm</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href='{% url "simulated_annealing" %}'>Heuristic-based algorithm</a>
+        </li>
+      </ul>
+     {% endblock %}
 
 
 {% block content %}
-<form action='{% url "simulated_annealing" %}' method='post' enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="row align-items-center">
-        <div class="col-1 p-3"></div>
-        <div class="col-4 p-3" style="color: white;">{{ form.config|as_crispy_field }}</div>
-        <div class="col-2 p-3" style="color: white;">{{ form.n_melodies|as_crispy_field }}</div>
-        <div class="col-2 p-3" style="color: white;">{{ form.n_melody_notes|as_crispy_field }}</div>
-        <div class="col-2 p-3" style="color: white;">{{ form.n_iterations|as_crispy_field }}</div>
-        <div class="col-1 p-3"></div>
-    </div>
+<div class="container p-0">
+    <form action='{% url "simulated_annealing" %}' method='post' enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row align-items-center">
+            <div class="col-4 p-3" style="color: white;">{{ form.config|as_crispy_field }}</div>
+            <div class="col-2 p-3" style="color: white;">{{ form.n_melodies|as_crispy_field }}</div>
+            <div class="col-2 p-3" style="color: white;">{{ form.n_melody_notes|as_crispy_field }}</div>
+            <div class="col-2 p-3" style="color: white;">{{ form.n_iterations|as_crispy_field }}</div>
+            <div class="col-1 pt-3 text-end">
+                <button type="submit" class="btn btn-outline-light">Generate</button>
+            </div>
+        </div>
 
-    <div class="row align-items-right pt-5 position-sticky">
-        <div class="col-10"></div>
-        <div class="col-2">
-            <button type="submit" class="btn btn-outline-light btn-lg">Generate</button>
-        </div>
-    </div>
 
-    <div class="row" style="margin-top: 5em;">
-        <div class="col-2"></div>
-        <div class="col-1"></div>
-        <div class="col-2 p-5">
-            <h3 style="color: white;">Your result:</h3>
-        </div>
-        <div class="col-4 p-5">
-            <audio class="align-middle position-sticky" id="audio" controls style="width: 30em;">
-                <source src="{{ best_melody }}" type="audio/mpeg">
-                Ваш браузер не поддерживает элемент audio.
-            </audio>
-        </div>
-        <div class="col-1"></div>
-        <div class="col-2"></div>
-    </div>
-</form>
+        {% if best_melody %}
+            <div class="row" style="margin-top: 5em;">
+                <div class="col-2"></div>
+                <div class="col-2 pt-5 ms-5">
+                    <h3 style="color: white;">Your result:</h3>
+                </div>
+                <div class="col-4 p-5">
+                    <audio class="align-middle position-sticky" id="audio" controls style="width: 30em;">
+                        <source src="{{ best_melody }}" type="audio/mpeg">
+                        Ваш браузер не поддерживает элемент audio.
+                    </audio>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-2"></div>
+            </div>
+        {% endif %}
+    </form>
+</div>
 {% endblock %}

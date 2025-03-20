@@ -1,3 +1,62 @@
 {% extends 'Evalutionary_music_generation/base.html' %}
 
-<h1>AAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+{% block title %}
+Home
+{% endblock %}
+
+      {% block links %}
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href='{% url "midi-pair" %}'>Manual algorithm</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href='{% url "simulated_annealing" %}'>Heuristic-based algorithm</a>
+        </li>
+      </ul>
+     {% endblock %}
+
+{% block content %}
+<div class="container text-center">
+    <div class="card border-light bg-dark d-inline-block m-5" style="width: 40%">
+        <img src="../../static/battle/images/manual.png" class="img-fluid rounded-start p-5">
+        <div class="card-body">
+            <h5 class="card-title text-light p-2">Manual algorithm</h5>
+            <p class="card-text text-light p-2">Melody generation based on manual choice.</p>
+            <a href='{% url "midi-pair" %}' class="btn btn-outline-light p-3 mb-2">try it</a>
+        </div>
+    </div>
+
+    <div class="card border-light bg-dark d-inline-block m-5" style="width: 40%">
+        <img src="../../static/battle/images/heuristic.png" class="img-fluid rounded-start p-5">
+        <div class="card-body">
+            <h5 class="card-title text-light p-2">Heuristic-based algorithm</h5>
+            <p class="card-text text-light p-2">Melody generation based on heuristics.</p>
+            <a href='{% url "simulated_annealing" %}' class="btn btn-outline-light p-3 mb-2">try it</a>
+        </div>
+    </div>
+</div>
+
+
+<!--<div class="row">-->
+
+<!--  <div class="col-md-5">-->
+<!--    <div class="card">-->
+<!--      <div class="card-body">-->
+<!--        <h5 class="card-title">Особое обращение с заголовком</h5>-->
+<!--        <p class="card-text">С вспомогательным текстом ниже в качестве естественного перехода к дополнительному контенту.</p>-->
+<!--        <a href="#" class="btn btn-primary">Перейти куда-нибудь</a>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <div class="col-md-5">-->
+<!--    <div class="card">-->
+<!--      <div class="card-body">-->
+<!--        <h5 class="card-title">Особое обращение с заголовком</h5>-->
+<!--        <p class="card-text">С вспомогательным текстом ниже в качестве естественного перехода к дополнительному контенту.</p>-->
+<!--        <a href="#" class="btn btn-primary">Перейти куда-нибудь</a>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+{% endblock %}

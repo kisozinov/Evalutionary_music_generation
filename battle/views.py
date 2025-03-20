@@ -89,7 +89,6 @@ class MidiPairView(View):
             request.session['pairs'] = pairs
             request.session['winners'] = []
 
-        time.sleep(2)
         return redirect('midi-pair')
 
 
