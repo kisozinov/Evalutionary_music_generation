@@ -98,6 +98,7 @@ class ManualResultView(TemplateView):
         previous_winners = []
         folder = os.path.join(settings.MEDIA_ROOT, "previous")
         for file in os.listdir(folder):
-            previous_winners.append(os.path.join(settings.MEDIA_URL, "previous", file))
+            if file.endswith(".mp3"):
+                previous_winners.append(os.path.join(settings.MEDIA_URL, "previous", file))
         context['previous_winners'] = previous_winners
         return context
