@@ -2,8 +2,8 @@ import os
 
 from django.views import View
 from django.shortcuts import render, redirect
-from midi2audio import FluidSynth
 
+from battle.core.convertor import convert_mid_to_mp3
 from simulated_annealing.core.generator import SimulatedAnnealingGA
 from simulated_annealing.core.heuristics import Heuristic
 from simulated_annealing.forms import SimulatedAnnealing
@@ -11,26 +11,21 @@ from Evalutionary_music_generation import settings
 
 
 class SimulatedAnnealingView(View):
-    def convert_mid_to_mp3(self, file_name, algorithm_dir):
-        soundfont_path = os.path.join(settings.BASE_DIR, 'soundfont', 'GeneralUser-GS.sf2')
-        mid_file_path = os.path.join(settings.MEDIA_ROOT, algorithm_dir, f'{file_name}.mid')
-        mp3_file_path = os.path.join(settings.MEDIA_ROOT, algorithm_dir, f'{file_name}.mp3')
-        fs = FluidSynth(soundfont_path)
-        fs.midi_to_audio(mid_file_path, mp3_file_path)
+    algorithm_dir = 'simulated_annealing'
 
     def get(self, request):
         if 'initial' in request.session:
             form = SimulatedAnnealing(initial=request.session['initial'])
         else:
             form = SimulatedAnnealing()
-
         context = {'form': form}
+
         if 'best_melody' in request.session:
             file_name = f'melody_{request.session['best_melody']}'
-            algorithm_dir = 'simulated_annealing'
-            self.convert_mid_to_mp3(file_name, algorithm_dir)
+
+            convert_mid_to_mp3(file_name, self.algorithm_dir)
             context.update(
-                {'best_melody': os.path.join(settings.MEDIA_URL, algorithm_dir, f'{file_name}.mp3')}
+                {'best_melody': os.path.join(settings.MEDIA_URL, self.algorithm_dir, f'{file_name}.mp3')}
             )
         return render(request, 'simulated_annealing/simulated_annealing.html', context)
 

@@ -3,7 +3,7 @@ import shutil
 from django.views import View
 from django.views.generic import TemplateView
 
-from battle.core.auto_generation import generate_random_melodies, save_melodies, random_pairs, crossover, mutation
+from battle.core.utils import generate_random_melodies, save_melodies, random_pairs, crossover, mutation
 from django.shortcuts import render, redirect
 from battle.core.convertor import convert_mid_to_mp3
 import os
