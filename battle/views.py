@@ -1,5 +1,4 @@
 import shutil
-import time
 
 from django.views import View
 from django.views.generic import TemplateView
@@ -79,7 +78,6 @@ class MidiPairView(View):
                 shutil.rmtree(source_folder)
             os.makedirs(source_folder)
 
-
             melodies = crossover(melodies, winners, request.session['initial']['n_melody_notes'])
             melodies = mutation(melodies)
             save_melodies(melodies, algorithm_dir)
@@ -103,7 +101,3 @@ class ManualResultView(TemplateView):
             previous_winners.append(os.path.join(settings.MEDIA_URL, "previous", file))
         context['previous_winners'] = previous_winners
         return context
-
-
-
-

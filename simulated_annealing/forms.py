@@ -12,7 +12,6 @@ class SimulatedAnnealing(forms.Form):
     n_melody_notes = forms.IntegerField(min_value=5, max_value=100, step_size=1, initial=8, label="notes num")
     n_iterations = forms.IntegerField(min_value=1, max_value=1000000, step_size=1, initial=1000, label="iterations num")
 
-
     def clean_config(self):
         file = self.cleaned_data.get("config")
         if file:
