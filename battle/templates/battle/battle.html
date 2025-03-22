@@ -1,86 +1,80 @@
 {% extends 'Evalutionary_music_generation/base.html' %}
 
-
 {% load crispy_forms_tags %}
 
-{% block title %}
-Manual
+{% block title %}Manual{% endblock %}
+
+{% block links %}
+    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+            <a class="nav-link active" href='{% url "midi-pair" %}'>Manual algorithm</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href='{% url "simulated_annealing" %}'>Heuristic-based algorithm</a>
+        </li>
+    </ul>
 {% endblock %}
 
-      {% block links %}
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" href='{% url "midi-pair" %}'>Manual algorithm</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href='{% url "simulated_annealing" %}'>Heuristic-based algorithm</a>
-        </li>
-      </ul>
-     {% endblock %}
-
-
 {% block content %}
-
-<div class="alert alert-secondary d-flex align-items-center mt-0 mb-5 mx-auto" style="max-width: 65em;" role="alert">
-    <i class="bi bi-info-circle-fill"></i>
-    <div class="ms-2">Generate random melodies, choose between 2 shown melodies. If you want to get best melodies at the moment, click 'Get result' button.</div>
-</div>
-
-<div class="container mb-5 pb-5 mt-5 pt-5">
-    <form action='{% url "midi-pair" %}' method='post'>
-        {% csrf_token %}
-        <div class="row g-2 justify-content-center align-items-center">
-            <div class="col-12 col-md-2 ps-3 pe-3 text-white" style="max-width: 11%">{{ form.n_melodies|as_crispy_field }}</div>
-            <div class="col-12 col-md-2 ps-3 pe-3 text-white" style="max-width: 10%">{{ form.n_melody_notes|as_crispy_field }}</div>
-            <div class="col-6 col-md-auto pt-3">
-                <button type="submit" class="btn btn-outline-light px-3">Generate</button>
-            </div>
-            <div class="col-6 col-md-auto pt-3">
-                <a href='{% url "manual_result" %}' class="btn btn-light-green px-3">Get result</a>
-            </div>
-        </div>
-    </form>
-</div>
-
-{% if mp3_file_url_0 %}
-    <div class="container mb-5 p-3">
-        <div class="row pb-3 pt-3 text-center">
-            <div class="col-6 text-light text-center"><h4>Melody {{ melody_0_index }}</h4></div>
-            <div class="col-6 text-light text-center"><h4>Melody {{ melody_1_index }}</h4></div>
-        </div>
-
-        <div class="row align-items-center pb-3 pt-3">
-            <div class="col-12 col-md-6 text-center">
-                <audio id="audio1" controls class="w-75">
-                    <source src="{{ mp3_file_url_0 }}" type="audio/mpeg">
-                    Ваш браузер не поддерживает элемент audio.
-                </audio>
-            </div>
-            <div class="col-12 col-md-6 text-center">
-                <audio id="audio2" controls class="w-75">
-                    <source src="{{ mp3_file_url_1 }}" type="audio/mpeg">
-                    Ваш браузер не поддерживает элемент audio.
-                </audio>
-            </div>
-        </div>
-
-        <div class="row align-items-center pb-3 pt-3">
-            <div class="col-12 col-md-6 text-center">
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="selected_melody" value="{{ melody_0_index }}">
-                    <button type="submit" class="btn btn-outline-light w-25">Select</button>
-                </form>
-            </div>
-            <div class="col-12 col-md-6 text-center">
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="selected_melody" value="{{ melody_1_index }}">
-                    <button class="btn btn-outline-light w-25">Select</button>
-                </form>
-            </div>
-        </div>
+    <div class="alert alert-secondary d-flex align-items-center mt-0 mb-5 mx-auto" style="max-width: 65em;" role="alert">
+        <i class="bi bi-info-circle-fill"></i>
+        <div class="ms-2">Generate random melodies, choose between 2 shown melodies. If you want to get best melodies at the moment, click 'Get result' button.</div>
     </div>
-{% endif %}
 
+    <div class="container mb-5 pb-5 mt-5 pt-5">
+        <form action='{% url "midi-pair" %}' method='post'>
+            {% csrf_token %}
+            <div class="row g-2 justify-content-center align-items-center">
+                <div class="col-12 col-md-2 ps-3 pe-3 text-white" style="max-width: 11%">{{ form.n_melodies|as_crispy_field }}</div>
+                <div class="col-12 col-md-2 ps-3 pe-3 text-white" style="max-width: 10%">{{ form.n_melody_notes|as_crispy_field }}</div>
+                <div class="col-6 col-md-auto pt-3">
+                    <button type="submit" class="btn btn-outline-light px-3">Generate</button>
+                </div>
+                <div class="col-6 col-md-auto pt-3">
+                    <a href='{% url "manual_result" %}' class="btn btn-light-green px-3">Get result</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if mp3_file_url_0 %}
+        <div class="container mb-5 p-3">
+            <div class="row pb-3 pt-3 text-center">
+                <div class="col-6 text-light text-center"><h4>Melody {{ melody_0_index }}</h4></div>
+                <div class="col-6 text-light text-center"><h4>Melody {{ melody_1_index }}</h4></div>
+            </div>
+
+            <div class="row align-items-center pb-3 pt-3">
+                <div class="col-12 col-md-6 text-center">
+                    <audio id="audio1" controls class="w-75">
+                        <source src="{{ mp3_file_url_0 }}" type="audio/mpeg">
+                        Ваш браузер не поддерживает элемент audio.
+                    </audio>
+                </div>
+                <div class="col-12 col-md-6 text-center">
+                    <audio id="audio2" controls class="w-75">
+                        <source src="{{ mp3_file_url_1 }}" type="audio/mpeg">
+                        Ваш браузер не поддерживает элемент audio.
+                    </audio>
+                </div>
+            </div>
+
+            <div class="row align-items-center pb-3 pt-3">
+                <div class="col-12 col-md-6 text-center">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="selected_melody" value="{{ melody_0_index }}">
+                        <button type="submit" class="btn btn-outline-light w-25">Select</button>
+                    </form>
+                </div>
+                <div class="col-12 col-md-6 text-center">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="selected_melody" value="{{ melody_1_index }}">
+                        <button class="btn btn-outline-light w-25">Select</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
